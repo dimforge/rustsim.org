@@ -32,6 +32,7 @@ class About extends React.Component {
       {
         content: "If you need help regarding the use of any crate part of the rustsim **organization**, you may either (in order of preference):" +
             "<ul><li>Ask a question on the [rustsim user forum](https://discourse.nphysics.org). There is one category per crate.</li>" +
+            "<li>Ask a question on [Discord](https://discord.gg/vt9DJSW).</li>" +
             "<li>Ask a question on IRC #rust and #rust-gamedev, or on discord `general` or `gamedev`.</li>" +
             "<li>Open an issue on the relevant crate's repository.</li>" +
             "</ul>",

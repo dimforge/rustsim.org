@@ -83,6 +83,7 @@ class HomeSplash extends React.Component {
           <PromoSection>
               <Button href="https://discourse.nphysics.org">User forum</Button>
               <Button href="https://github.com/rustsim">View on Github</Button>
+              <Button href="https://discord.gg/vt9DJSW">Join us on Discord</Button>
             {/*<Button href={docUrl('doc1.html', language)}>Example Link</Button>*/}
             {/*<Button href={docUrl('doc2.html', language)}>Example Link 2</Button>*/}
           </PromoSection>
@@ -107,7 +108,8 @@ const Features = () => (
         {
             content: 'Expressive traits hierarchy from the most simple simple algebraic entities (like magmas) to more complex ones (like transformation groups).' +
                      '<br/><img src="/img/wasm.svg" title="Compatible with WebAssembly." height="30px"/><span class="space"><img src="/img/no_std.svg" title="Can work without std." height="30px"/>' +
-                     '<p><a class="button" href="https://docs.rs/alga">API Doc</a></p>',
+                     '<p><a class="button" href="https://docs.rs/alga">API Doc</a>' +
+                     '<span class="space"></span><a class="button" href="https://github.com/rustsim/alga">GitHub</a></p>',
             image: imgUrl('alga.svg'),
             imageLink: 'https://docs.rs/alga',
             imageAlign: 'top',
@@ -117,7 +119,9 @@ const Features = () => (
             content: 'Efficient vector and matrix operations and decompositions.' +
                      ' Broad range of transformations like quaternions, isometries, similarities, etc.' +
                      '<br/><img src="/img/wasm.svg" title="Compatible with WebAssembly." height="30px"/><span class="space"><img src="/img/no_std.svg" title="Can work without std." height="30px"/>' +
-                     '<p><a class="button" href="https://nalgebra.org">User Guide</a><span class="space"></span><a class="button" href="https://nalgebra.org/rustdoc/nalgebra">API Doc</a></p>',
+                     '<p><a class="button" href="https://nalgebra.org">User Guide</a>' +
+                     '<span class="space"></span><a class="button" href="https://nalgebra.org/rustdoc/nalgebra">API Doc</a>' +
+                     '<span class="space"></span><a class="button" href="https://github.com/rustsim/nalgebra">GitHub</a></p>',
             image: 'https://www.nalgebra.org/img/logo_nalgebra.svg',
             imageLink: 'https://www.nalgebra.org',
             imageAlign: 'top',
@@ -129,7 +133,8 @@ const Features = () => (
                     '<br/><img src="/img/wasm.svg" title="Compatible with WebAssembly." height="30px"/>' +
                     '<p><a class="button" href="https://ncollide.org">User Guide</a>' +
                      '<span class="space"></span><a class="button" href="https://ncollide.org/rustdoc/ncollide2d">2D API Doc</a>' +
-                     '<span class="space"></span><a class="button" href="https://ncollide.org/rustdoc/ncollide3d">3D API Doc</a></p>',
+                     '<span class="space"></span><a class="button" href="https://ncollide.org/rustdoc/ncollide3d">3D API Doc</a>' +
+                     '<span class="space"></span><a class="button" href="https://github.com/rustsim/ncollide">GitHub</a></p>',
             image: imgUrl('logo_ncollide.svg'),
             imageLink: 'https://www.ncollide.org',
             imageAlign: 'top',
@@ -141,7 +146,8 @@ const Features = () => (
                 '<br/><img src="/img/wasm.svg" title="Compatible with WebAssembly." height="30px"/>' +
                 '<p><a class="button" href="https://nphysics.org">User Guide</a>' +
                 '<span class="space"></span><a class="button" href="https://nphysics.org/rustdoc/nphysics2d">2D API Doc</a>' +
-                '<span class="space"></span><a class="button" href="https://nphysics.org/rustdoc/nphysics3d">3D API Doc</a></p>',
+                '<span class="space"></span><a class="button" href="https://nphysics.org/rustdoc/nphysics3d">3D API Doc</a>' +
+                '<span class="space"></span><a class="button" href="https://github.com/rustsim/nphysics">GitHub</a></p>',
         image: 'https://www.nphysics.org/img/logo_nphysics_full.svg',
             imageLink: 'https://www.nphysics.org',
             imageAlign: 'top',

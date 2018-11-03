@@ -6,7 +6,7 @@ author: Sébastien Crozet
 Welcome to the very first edition of _This month in rustsim_. This monthly newsletter will provide you with a
 summary of important update that occurred within the rustsim community. This includes in particular updates about
 the [**nphysics**](https://nphysics.org), [**ncollide**](https://ncollide.org), [**nalgebra**](https://nalgebra.org),
-and [**alga**](https://github.com/rustsim/nalgebra) crate. This first posts will actually contain updates for the past
+and [**alga**](https://github.com/rustsim/alga) crate. This first posts will actually contain updates for the past
 two months, that is, since the creation of the [**rustsim**](https://github.com/rustsim) github organization itself!
 
 <!--truncate-->

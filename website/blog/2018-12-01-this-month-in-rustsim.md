@@ -43,7 +43,7 @@ design improvements for code-reuse and for collision detection accuracy (those a
    has been improved to simplify code-reuse in the future. This will allow collision detection
    involving shapes like capsules and heightmaps to be implemented very easily and efficiently in the future.
 3. Deformable polygonal lines are now [possible](https://github.com/rustsim/ncollide/blob/deformable/src/shape/polyline.rs#L477).
-   Moreover, polygonal lines are now described with a buffer of indices as well as buffer of indices. This will allow the
+   Moreover, polygonal lines are now described with a buffer of vertices as well as a buffer of indices (instead of just vertices). This will allow the
    description of more complex shapes like the skeleton of trees with branches as well as closed loops. Before, only a simple continuous curve without
    loop was allowed.
    

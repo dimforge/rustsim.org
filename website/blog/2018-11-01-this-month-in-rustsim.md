@@ -1,5 +1,5 @@
 ---
-title: The last two months in rustsim #1
+title: The last two months in rustsim #1 (September-October 2018)
 author: Sébastien Crozet
 ---
 

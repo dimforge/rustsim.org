@@ -11,6 +11,9 @@ two months, that is, since the creation of the [**rustsim**](https://github.com/
 
 <!--truncate-->
 
+Join us on [discord](https://discord.gg/vt9DJSW)!
+Join us on our [user forum](https://discourse.nphysics.org )!
+
 # New communication channels
 First and foremost new communication channel have been created:
 * A new website for the rustsim organization where those newsletters will be hosted: https://rustsim.org.

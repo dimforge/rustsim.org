@@ -13,6 +13,7 @@ and [**alga**](https://github.com/rustsim/alga) crates.
 <!--truncate-->
 
 Join us on [discord](https://discord.gg/vt9DJSW)!
+Join us on our [user forum](https://discourse.nphysics.org )!
 
 # Release date: february 3rd 2019
 During the path few months, we described several new unreleased features in **ncollide** and **nphysics** (in particular related

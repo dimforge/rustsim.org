@@ -11,6 +11,7 @@ and [**alga**](https://github.com/rustsim/alga) crates.
 <!--truncate-->
 
 Join us on [discord](https://discord.gg/vt9DJSW)!
+Join us on our [user forum](https://discourse.nphysics.org )!
 
 # Progress of current developments
 ## Physics simulation of deformable bodies

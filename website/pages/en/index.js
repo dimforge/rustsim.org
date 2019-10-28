@@ -148,7 +148,7 @@ const Features = () => (
                 '<span class="space"></span><a class="button" href="https://nphysics.org/rustdoc/nphysics2d">2D API Doc</a>' +
                 '<span class="space"></span><a class="button" href="https://nphysics.org/rustdoc/nphysics3d">3D API Doc</a>' +
                 '<span class="space"></span><a class="button" href="https://github.com/rustsim/nphysics">GitHub</a></p>',
-        image: 'https://www.nphysics.org/img/logo_nphysics_full.svg',
+            image: 'https://www.nphysics.org/img/logo_nphysics_full.svg',
             imageLink: 'https://www.nphysics.org',
             imageAlign: 'top',
             title: '**[nphysics](https://nphysics.org)** − Physics Simulation'

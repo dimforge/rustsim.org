@@ -1,5 +1,5 @@
 ---
-title: This month in rustsim #7 (August − September - October 2019)
+title: This month in rustsim #8 (August − September - October 2019)
 author: Sébastien Crozet
 ---
 

@@ -152,6 +152,26 @@ const Features = () => (
             imageLink: 'https://www.nphysics.org',
             imageAlign: 'top',
             title: '**[nphysics](https://nphysics.org)** − Physics Simulation'
+        },
+        {
+            content: 'Interactive or offline fluid simulation engine for both 2D and 3D applications.' +
+                ' Implements multiphase fluids as well as two-way coupling with <b>nphysics</b>.' +
+                '<br/><img src="/img/wasm.svg" title="Compatible with WebAssembly." height="30px"/>' +
+                '<p><a class="button" href="https://salva.rs">User Guide</a>' +
+                '<span class="space"></span><a class="button" href="https://salva.rs/rustdoc/salva2d">2D API Doc</a>' +
+                '<span class="space"></span><a class="button" href="https://salva.rs/rustdoc/salva3d">3D API Doc</a>' +
+                '<span class="space"></span><a class="button" href="https://github.com/rustsim/salva">GitHub</a></p>',
+            image: 'https://www.salva.rs/img/logo_salva_full.svg',
+            imageLink: 'https://www.salva.org',
+            imageAlign: 'top',
+            title: '**[Salva](https://salva.rs)** − Fluid Simulation'
+        },
+        {
+            content: '',
+            image: '',
+            imageLink: '',
+            imageAlign: '',
+            title: ''
         }
     ]}
   </Block>

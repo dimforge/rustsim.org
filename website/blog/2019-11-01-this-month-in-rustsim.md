@@ -5,7 +5,7 @@ author: Sébastien Crozet
 
 Welcome to the eighth edition of _This month in rustsim_! This monthly newsletter will provide you with a
 summary of important update that occurred within the rustsim community. This includes in particular updates about
-the [**nphysics**](https://nphysics.org) (physics engine),  [**salva**](https://nphysics.org) (fluid simulation), [**ncollide**](https://ncollide.org) (for collision-detection),
+the [**nphysics**](https://nphysics.org) (physics engine),  [**salva**](https://salva.rs) (fluid simulation), [**ncollide**](https://ncollide.org) (for collision-detection),
 [**nalgebra**](https://nalgebra.org) (for linear algebra),
 and [**alga**](https://github.com/rustsim/alga) (for abstract algebra) crates. This eighth edition will actually contain updates for the past
 **three** months (I got sick between the second and third month so I did not get the time to write a new post then. Sorry!)

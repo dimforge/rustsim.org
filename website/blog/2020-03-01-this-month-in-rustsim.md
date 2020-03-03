@@ -100,5 +100,5 @@ Finally, thanks to all the former, current and new patrons supporting me, [sebcr
 lead developer of the current crates part of this organization on [patreon](http://patreon.com/sebcrozet) or [GitHub sponsors](https://github.com/sponsors/sebcrozet/)!
 This help is greatly appreciated and allows me do spend a significant amount of time developing those crates.
 
-[^1]: _The list of contributors is automatically generated from the past two months' github commit history.
+[^1]: _The list of contributors is automatically generated from the past four months' github commit history.
 Don't hesitate to let us know if your name should have been mentioned here._

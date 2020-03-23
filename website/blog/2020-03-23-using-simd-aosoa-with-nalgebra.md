@@ -1,25 +1,25 @@
 ---
-title: Using SIMD Array-of-Structs-of-Arrays with nalgebra + comparison with ultraviolet
+title: SIMD Array-of-Structures-of-Arrays in nalgebra and comparison with ultraviolet
 author: Sébastien Crozet
 ---
 
 __Hello everyone!__
 
 In this post I'd like to introduce the next major change that will be released in **nalgebra** at the end of this month (March 2020).
-This change is about adding the support for SIMD AoSoA to **nalgebra**. I'll explain what I mean by SIMD AoSoA (Array-of-Structs-of-Arrays) and how it relates
-to SoA (Struct-of-Arrays) and AoS (Array-of-Structs). To give you hint, SIMD AoSoA is actually what the recent [ultraviolet](https://crates.io/crates/ultraviolet)
+This change is about adding the support for SIMD AoSoA to **nalgebra**. I'll explain what I mean by SIMD AoSoA (Array-of-Structures-of-Arrays with explicit SIMD) and how it relates
+to SoA (Structure-of-Arrays) and AoS (Array-of-Structures). To give you an idea, SIMD AoSoA is actually what the recent [ultraviolet](https://crates.io/crates/ultraviolet)
 crate has been using to achieve its amazing performances.
 
 
-Here is a benchmark including the next version of __nalgebra__ to be released
-(the best times within a 2.5% range of the minimum are highlighted). Here, the __ultraviolet__ column relies on the non-wide types
-of `ultraviolet` (`Vec2`, `Mat2`, `Isometry3`, etc.) while `ultraviolet_f32x4` uses its _wide_ types (`Wec2`, `Wat2`, `WIsometry3`, etc.):
+Here is a benchmark including the next (to-be-released) version of __nalgebra__. The best times within a 2.5% range of the minimum of each row are highlighted.
+Here, the __ultraviolet__ column uses the non-_wide_ types
+of `ultraviolet` (`Vec2`, `Mat2`, `Isometry3`, etc.) while the column __ultraviolet_f32x4__ uses its _wide_ types (`Wec2`, `Wat2`, `WIsometry3`, etc.):
 
 | benchmark                      |   nalgebra_f32x4   |   ultraviolet_f32x4   |      nalgebra   |   ultraviolet   |         glam   |           vek   |        cgmath   |        euclid   |
 |--------------------------------|--------------------|-----------------------|-----------------|-----------------|----------------|-----------------|-----------------|-----------------|
 | euler 2d x10000                |       __2.992 us__ |          __3.014 us__ |      9.028 us   |       5.28 us   |     5.166 us   |      5.258 us   |      5.259 us   |      8.631 us   |
 | euler 3d x10000                |       __4.546 us__ |          __4.587 us__ |      17.84 us   |      18.34 us   |     6.311 us   |      17.57 us   |      18.04 us   |      17.97 us   |
-| isometry transform point2 x1   |      __8.1000 ns__ |           8.6412 ns   |    23.4637 ns   |    54.5840 ns   |      N/A       |       N/A       |       N/A       |       N/A       |
+| isometry transform point2 x1   |      __8.1024 ns__ |           8.6412 ns   |    23.4637 ns   |    54.5840 ns   |      N/A       |       N/A       |       N/A       |       N/A       |
 | isometry transform point2 x100 |       __2.801 us__ |          __2.837 us__ |      3.109 us   |      4.918 us   |      N/A       |       N/A       |       N/A       |       N/A       |
 | isometry transform point3 x1   |     __16.1052 ns__ |          20.6723 ns   |    61.8824 ns   |   330.1143 ns   |      N/A       |       N/A       |       N/A       |       N/A       |
 | isometry transform point3 x100 |       __4.515 us__ |            4.794 us   |      6.546 us   |      18.19 us   |      N/A       |       N/A       |       N/A       |       N/A       |
@@ -65,26 +65,27 @@ of `ultraviolet` (`Vec2`, `Mat2`, `Isometry3`, etc.) while `ultraviolet_f32x4` u
 | vector3 length                 |        5.3741 ns   |         __5.2332 ns__ |    20.5369 ns   |    34.2988 ns   |   20.5652 ns   |    20.6259 ns   |    20.9281 ns   |    20.6052 ns   |
 | vector3 normalize              |     __15.5892 ns__ |        __15.6585 ns__ |    59.1804 ns   |    60.9510 ns   |   35.7763 ns   |    61.3666 ns   |    36.7304 ns   |    61.3199 ns   |
 
-Please see the last section of this post for a more comprehensive benchmarks (including the use of `f32x8` and `f32x16`
+Please see the [last section](http://localhost:3000/blog/2020/03/23/using-simd-aosoa-with-nalgebra#benchmarks-of-rust-linear-algebra-crates) of this post for a more comprehensive benchmark (including the use of `f32x8` and `f32x16`
 with nalgebra) and details about the benchmark conditions.
 
-# What is SIMD AoSoA?
-The data layout I call here "SIMD AoSoA" is inspired form the AoSoA (Array-of-Structs-of-Arrays) layout which is itself a
-combination of two more common layouts: SoA (Struct-of-Arrays) and AoS (Array-of-Structs). So let's see what is the difference
-of all those layouts with the simple example using 3D vectors (vectors with three components `x, y, z`): given two sets of
-1000 3D vectors, we want to compute the sum of each pairs of vectors with the same index.
+## What is AoSoA with explicit SIMD?
+The data layout I call here __AoSoA with explicit SIMD__ (or __SIMD AoSoA__ for short) is a straightforward variant of the __AoSoA__ (Array-of-Structures-of-Arrays) layout which is itself a
+combination of two more common layouts: __SoA__ (Structure-of-Arrays) and __AoS__ (Array-of-Structures). So let's see what is the difference
+of all those layouts with the simple example using 3D vectors (vectors with three components `x, y, z`): given two arrays of
+1024 3D vectors, we want to compute the sum of each pairs of vectors with the same index.
 
-_Note:_ the explanations here are merely a superficial introduction of the AoS vs SoA vs AoSoA concepts. I just want to clarify
- some of the differences and some of their advantages/inconvenient. Though I won't provide any detailed analysis of the generated
+_Note:_ The explanations here are merely a superficial introduction of the AoS vs SoA vs AoSoA concepts. I just want to explain
+ some of the differences and some of their advantages/disadvantages. I won't give any detailed analysis of the generated
 assembly code after compiling the examples provided. The benchmarks at the end of this post will show the performance difference
-between AoS and SIMD AoSoA.
+between AoS and SIMD AoSoA. You may be interest by [that article too](https://software.intel.com/en-us/articles/memory-layout-transformations).
 
-_Note 2:_ for iterating through the arrays, I'll be using an explicit index `for i in 0..1000` instead of iterators. This
-is done to make the number of iterations explicit, and the code simpler to understand for readers that are not used to Rust iterators.
+_Note 2:_ For iterating through the arrays, I'll be using explicit indices `for i in 0..1024` instead of iterators. This
+is on purpose to make the number of iterations explicit and to make the code easier to understand for readers that are not
+used to Rust iterators.
 
-## Array-of-Structs (AoS)
-The Array-of-Structs layout is the most common and intuitive layout. You define a structure as the aggregation of all its
-fields. And multiple structs of the same type are simply stored one after the other inside of a `Vec`. Here is what our
+### Array-of-Structures (AoS)
+The Array-of-Structures layout is the most common and intuitive layout. You define a structure as the aggregation of all its
+fields. And multiple structures of the same type are simply stored one after the other inside of an array. Here is what our
 3D vector would look like:
 
 ```rust
@@ -94,12 +95,11 @@ struct Vector3 {
     z: f32
 }
 
-/// An array containing 1000 vectors.
-type SetOfVector3 = [Vector3; 1000];
+/// An array containing 1024 vectors.
+type SetOfVector3 = [Vector3; 1024];
 
-/// If we want to add 1000 vectors, each `SetOfVector3` is a `Vec` with length 1000.
-fn add_sets_of_vectors(a: &mut SetOfVector3, b: &SetOfVector3) {
-    for i in 0..1000 {
+fn add_arrays_of_vectors(a: &mut SetOfVector3, b: &SetOfVector3) {
+    for i in 0..1024 {
         va.x += vb.x;
         va.y += vb.y;
         va.z += vb.z;
@@ -110,40 +110,39 @@ fn add_sets_of_vectors(a: &mut SetOfVector3, b: &SetOfVector3) {
 Here, we need to iterate through each pair of vectors, one from each set, and execute our sum. This is arguably the most
 intuitive way of doing this, but not necessarily the most efficient. All Rust linear algebra crates from this benchmark can work with this layout.
 
-### Pros of AoS
+#### Pros of AoS
 - It is easy to read/write/modify each vector individually.
-- AoS are generally easier to reason with when designing algorithm.
+- AoS are generally easier to reason with when designing algorithms.
 
-### Cons of AoS
-- Not as efficient as other layouts when batch-processing is concerned.
+#### Cons of AoS
+- Not as efficient as other layouts when working on a large number of elements of the same type.
 
-## Struct-of-Arrays (SoA)
-The Struct-of-Arrays layout is less intuitive to work with because it will store each field of a struct into its own
-set. Thus, our set of vector would look like that:
+### Structure-of-Arrays (SoA)
+The Structure-of-Arrays layout is less intuitive to work with because it will store each field of a struct into its own
+array. Thus, our set of vector set would look like that:
 
 ```rust
 struct SetOfVector3 {
-    x: [f32; 1000],
-    y: [f32; 1000],
-    z: [f32; 1000],
+    x: [f32; 1024],
+    y: [f32; 1024],
+    z: [f32; 1024],
 }
 ```
 
-These is no explicit `Vector3` structure here because they are all packed into the set. Accessing the components of the `i`-th
+These is no explicit `Vector3` structure here because they are all packed into the array. Accessing the components of the `i`-th
 vector of the set means we access `set.x[i]`, `set.y[i]` and `set.z[i]`. With this structure, our vector sum becomes the following:
 
 ```rust
-/// If we want to add 1000 vectors, each component of `SetOfVector3` is a `Vec` with length 1000.
-fn add_sets_of_vectors(a: &mut SetOfVector3, b: &SetOfVector3) {
-    for i in 0..1000 {
+fn add_arrays_of_vectors(a: &mut SetOfVector3, b: &SetOfVector3) {
+    for i in 0..1024 {
         a.x[i] += b.x[i];
     }
 
-    for i in 0..1000 {
+    for i in 0..1024 {
         a.y[i] += b.y[i];
     }
 
-    for i in 0..1000 {
+    for i in 0..1024 {
         a.z[i] += b.z[i];
     }
 }
@@ -154,22 +153,17 @@ will be much more efficient than our AoS approach because this is extremely vect
 able to group consecutive vector entries for each component, and use SIMD instructions to perform the 2, 4, 8, or even 16
 additions at a time instead of a single one.
 
-### Pros of SoA
+#### Pros of SoA
 - Extremely fast.
 
-### Cons of SoA
+#### Cons of SoA
 - Algorithms need to be explicitly designed with SoA in mind to be efficient.
 - Manipulating vectors individually is more difficult and can be less efficient than AoS.
-- It is more difficult to think in term of SoA than in term of AoS.
+- It is more difficult to think in terms of SoA than in terms of AoS.
 
-## Array-of-Structs-of-Arrays (AoSoA)
-Alright, on the one hand we have AoS which is very convenient for accessing vectors individually but not very efficient for
-processing lots of vectors simultaneously. And on the other hand we have SoA which is extremely efficient for
-processing lots of vectors simultaneously, but makes is sometimes pretty inconvenient to access them individually.
-
-Here comes Array-of-Structs-of-Arrays (AoSoA): a combination of AoS and SoA which is still much more efficient than AoS while making
-the manipulation of individual vectors more efficient and sometimes more convenient. The idea is to first define a _wide_ 3D vector, i.e.,
-we pack several vectors into a single struct:
+### Array-of-Structures-of-Arrays (AoSoA)
+Now let's combine both SoA and AoS to obtain: Array-of-Structures-of-Arrays (AoSoA). The idea is to first define a _wide_
+3D vector, i.e., we pack several vectors into a single struct:
 
 ```rust
 struct WideVector3 {
@@ -180,19 +174,19 @@ struct WideVector3 {
 ```
 The term _wide_ 3D vector is inspired from the terminology used in the [ultraviolet](https://crates.io/crates/ultraviolet) crate's documentation.
 Here, our `WideVector3` actually represents 4 vectors laid out in a SoA fashion. If we want our set of vector to contain more than just
-4 vectors, we can define an array of `WideVector3` (so we end up with an array of structure of array) with only `1000 / 4` elements
+4 vectors, we can define an array of `WideVector3` (so we end up with an array of structure of array) with only `1024 / 4` elements
 because each element already represent 4 vectors:
 
 ```rust
-type SetOfWideVector3 = [WideVector3; 1000 / 4];
+type SetOfWideVector3 = [WideVector3; 1024 / 4];
 ```
 
 Our vector sum then becomes quite similar to the AoS approach, except that we have to add each 4 components in the inner
 loop in an SoA fashion:
 
 ```rust
-fn add_sets_of_vectors(a: &mut SetOfWideVector3, b: &SetOfWideVector3) {
-    for i in 0..1000 / 4 {
+fn add_arrays_of_vectors(a: &mut SetOfWideVector3, b: &SetOfWideVector3) {
+    for i in 0..1024 / 4 {
         // NOTE: each of those groups of four sums can be executed as
         // a single SIMD instruction.
         va[i].x[0] += vb[i].x[0];
@@ -214,22 +208,23 @@ fn add_sets_of_vectors(a: &mut SetOfWideVector3, b: &SetOfWideVector3) {
 ```
 
 So with this data layout, we still achieve great performances because components are grouped by 4, and thus their sum can
-be done with a single SIMD instruction. To manipulate an individual vector we first have to access the corresponding _wide_
+easily be auto-vectorized to a single SIMD instruction. To manipulate an individual vector we first have to access the corresponding _wide_
 vector, and then its components on the `x,y,z` arrays.
 
-### Pros of AoSoA
-- Great performance compared to AoS.
-- Designing algorithm around AoSoA is somewhat easier than with plain SoA.
+#### Pros of AoSoA
+- Great performances compared to AoS.
+- Can even beat the performances of SoA considering AoSoA can be more cache-friendly in modern architecture.
+- Designing algorithms around AoSoA is somewhat easier than with plain SoA.
+- Using AoSoA, most linear-algebra operations can be easily vectorized as long as they don't rely too much on branching.
 
-### Cons of AoSoA
+#### Cons of AoSoA
 - We still need to design our algorithms carefully to use AoSoA efficiently.
 
-## SIMD Array-of-Structs-of-arrays (SIMD AoSoA)
+### Array-of-Structures-of-arrays with explicit SIMD (SIMD AoSoA)
 Finally, let's talk about what I call here _SIMD AoSoA_. This layout is actually exactly the same as AoSoA presented before,
-except we carefully select the number of elements on each components of our _wide_ vectors. This number is chosen so that
-it is SIMD friendly, and we make sure each component is properly aligned. This can be achieved easily by using, e.g., types from
+except we that we use explicit SIMD primitives like, e.g., the types from
 the [packed_simd](https://crates.io/crates/packed_simd) crate instead of plain arrays. For example we can use 4-lanes SIMD
-floats instead of `[f32; 4]`:
+floats `packed_simd::f32x4` instead of `[f32; 4]`:
 
 ```rust
 struct WideVector3 {
@@ -238,16 +233,16 @@ struct WideVector3 {
     z: packed_simd::f32x4,
 }
 
-type SetOfWideVector3 = [WideVector3; 1000 / 4];
+type SetOfWideVector3 = [WideVector3; 1024 / 4];
 ```
 
 Then our sum will be exactly the same as in the AoSoA approach, except that we don't have to deal with each 4 lanes
 explicitly because `packed_simd::f32x4` implements the `Add` trait:
 
 ```rust
-fn add_sets_of_vectors(a: &mut SetOfWideVector3, b: &SetOfWideVector3) {
-    for i in 0..1000 / 4 {
-        // NOTE: each sum will be executed as a single SIMD operation.
+fn add_arrays_of_vectors(a: &mut SetOfWideVector3, b: &SetOfWideVector3) {
+    for i in 0..1024 / 4 {
+        // NOTE: each 4-lanes sum will be executed as a single SIMD operation.
         va[i].x += vb[i].x;
         va[i].y += vb[i].y;
         va[i].z += vb[i].z;
@@ -264,72 +259,73 @@ struct WideVector3 {
     z: packed_simd::f32x16,
 }
 
-type SetOfWideVector3 = [WideVector3; 1000 / 16];
+type SetOfWideVector3 = [WideVector3; 1024 / 16];
 ```
 
 Another benefit of using SIMD types explicitly here is that we no longer rely on the compiler's auto-vectorization.
-So we can get SIMD instructions even in debug mode, and in some situations where the compiler would faile to auto-vectorize
+So we can get SIMD instructions even in debug mode, and in some situations where the compiler would fail to auto-vectorize
 properly.
 
-## Using SIMD AoSoA for linear-algebra in Rust: ultraviolet and nalgebra
-As far as I know, the first crate that implemented this concept for linear algebra in Rust is [ultraviolet](https://crates.io/crates/ultraviolet).
+### Using SIMD AoSoA for linear-algebra in Rust: ultraviolet and nalgebra
+As far as I know, the first crate that implemented this concept for (gamedev) linear algebra in Rust is [ultraviolet](https://crates.io/crates/ultraviolet).
 At the end of this month (March 2020), you will also be able to use this approach with [nalgebra](https://nalgebra.org), in its upcoming version 0.21.0.
 
 With `ultraviolet`, you have the choice between two families of types: regular types (`Vec2`, `Mat3`, `Isometry3`, etc.) and _wide_ types (`Wec2`, `Wat3`, `WIsometry3`).
-The regular types are designed to be usable with the common AoS layout (just like every other linear algebra crate), with vector/matrix components set to `f32`.
-The _wide_ types on the other hand are designed to be used with the SIMD AoSoA layout: each _wide_ type pack the corresponding four non-wide types in a single structure
-(e.g. one `Wec3` represent four `Vec3`), and the wide vector/wide matrix components are of type `f32x4`. Note that the `f32x4` type comes
-from the [wide crate](https://crates.io/crates/wide). As of today, `ultraviolet` is limited to 32-bits floats, and 4-lanes 32-bits floats.
-You can't use it with SIMD integers, nor with 64-bits floats or 32-bits floats with a number of lanes different from 4.
+The regular types are designed to be usable with the common AoS layout, with vector/matrix components set to `f32`.
+The _wide_ types on the other hand are designed to be used with the SIMD AoSoA layout: each _wide_ type packs the corresponding four non-wide types into a single structure
+(e.g. one `Wec3` represents four `Vec3`), and the wide vector/wide matrix components are of type `f32x4`
+from the [wide crate](https://crates.io/crates/wide). As of today, `ultraviolet` is limited to 32-bits floats, and 4-lanes 32-bits SIMD floats.
+You can't use it with SIMD integers, nor with 64-bits floats or 32-bits SIMD floats with a number of lanes different from 4.
 
 With `nalgebra`, all types of vectors/matrices/tansformations are generic wrt. their component type. Therefore, for a
 AoS layout, you can use, e.g., the `Vector2<f32>` type. And if you want to leverage SIMD AoSoA, you can use `Vector2<f32x4>` instead and
-that will give you four 2D vectors for the price of one. Note that the `f32x4` type here comes from the new [simba](https://crates.io/crates/wide)
-and is a newtype for the `f32x4` from [packed_simd](https://crates.io/crates/wide) (the upcoming standard safe SIMD implementation in Rust).
+that will give you four 2D vectors for the price of one. Note that the `f32x4` type here comes from the new [simba](https://crates.io/crates/simba)
+crate and is a newtype for the `f32x4` from [packed_simd](https://crates.io/crates/packed_simd) (the upcoming standard safe SIMD implementation in Rust).
 A newtype was required because of the orphan rules, and the need to implement some traits from the __num__ crate for the SIMD types.
-Simba is not limited to `f32x4` though as it defines a newtype for every single numeric type of __packed_simd__. Therefore __nalgebra__
-will also support all the integer and float SIMD types, with 2, 4, 8, or 16 lanes. You can for example write and use `Isometry2<f32x16>` as
-a SoA set of 16 `Isometry2<f32>.
+__Simba__ is not limited to `f32x4` though as it defines a newtype for every single numeric type of __packed_simd__. Therefore __nalgebra__
+will also support all the integer and float SIMD types, with 2, 4, 8, or 16 lanes. You can for example write and use `Isometry2<simba::f32x16>` as
+a SoA set of 16 `Isometry2<f32>`.
 Finally __nalgebra__ has support for SIMD on all the platforms supported by __packed_simd__ itself.
 
 Here are some (subjective) pros and cons for __ultraviolet__ and __nalgebra__:
-- _Pros of ultraviolet_: no generics so it is simple to use and efficient, even without compiler optimizations enabled.
-- _Pros of nalgebra_: generics allow the use of all SIMD types. More feature-complete and tested than __ultraviolet__. Based on __packed_simd__ with great platform support.
-- _Cons of ultraviolet_: cannot use 64-bits floats as well as SIMD types other than 32-bit 4-lanes floats. More limited feature set (but that may be enough for gamedev).
-- _Cons of nalgebra_: generics make it harder to use, and make the doc harder to browse. Also _nalgebra_ is much less efficient without compiler optimizations enabled.
+- _Pros of ultraviolet_: no generics so it is simple to use, and efficient even without compiler optimizations enabled. Works on stable Rust.
+- _Pros of nalgebra_: generics allow the use of all SIMD types. More feature-complete and tested than __ultraviolet__. Based on __packed_simd__ with great platform support
+but we could make it work with the __wide__ crate too.
+- _Cons of ultraviolet_: cannot use 64-bits floats nor SIMD types other than 32-bit 4-lanes floats. It has a more limited feature set (but that may be enough for gamedev).
+- _Cons of nalgebra_: generics make it harder to use, and make the doc harder to browse. Also _nalgebra_ is much less efficient without compiler optimizations enabled. Because
+SIMD AoSoA is based on __packed_simd__, the use of SIMD types will only work with the nightly compiler.
 
-## Benchmarks of Rust linear-algebra crates.
+## Benchmarks of Rust linear-algebra crates
 Now is the time to see if SIMD AoSoA is useful at all. The benchmarks I run here are a modified version of the
 __mathbench-rs__ benchmark suite you may have already head of. For example it
 was used when `glam` and `ultraviolet` were published.
 
-If you want to run the benchmarks on your machine, you can clone [my fork](https://github.com/sebcrozet/mathbench-rs) and
+If you want to run the benchmarks on your machine, you can [clone my fork](https://github.com/sebcrozet/mathbench-rs) and
 either run `cargo bench` or `RUSTFLAGS='-C target-cpu=native' cargo bench`.
 
-The modifications I made on the benchmark were the following:
+The modifications I made to the benchmark were the following:
 
 - I added `codegen-units = 1` to the `[profile.bench]` section. This allows to get as much optimization as we can get from 
 the compiler (this is typically what you want before releasing a binary). It turns out that this can affect the performance
 of __nalgebra__ which benefits significantly from compiler optimizations.
-- I added support for __ultraviolet__ regular types (identified by the column `ultraviolet` in the benchmarks) as well
-as its _wide_ types (identified by the column `ultraviolet_f32x4`).
+- I added support for __ultraviolet__ regular types (identified by the column __ultraviolet__ in the benchmarks) as well
+as its _wide_ types (identified by the column __ultraviolet_f32x4__).
 - Because __ultraviolet__ use the concepts of rotors instead of quaternions for its rotation, I used its `Rotor/WRotor` types for
-all the quaternion benchmarks.
-- I added support for using __nalgebra__ with the f32 SIMD with 4, 8, and 16 lanes identified by `nalgebra_f32x4`, `nalgebra_f32x8`
-and `nalgebra_f32x16`.
-- I added benchmarks for 3D isometries of both ultraviolet and nalgebra.
+all its _quaternion_ benchmark rows.
+- I added support for using __nalgebra__ with f32 SIMD with 4, 8, and 16 lanes identified by __nalgebra_f32x4__, __nalgebra_f32x8__
+and __nalgebra_f32x16__.
+- I added benchmarks for 3D isometries of both __ultraviolet__ and __nalgebra__.
 - I modified the benchmark of unary and binary operations so they measure the time to process 16 elements. For example
-when benchmarking 2D matrix transposition, we are actually seeing the computation time for transposing 16 matrix (instead
+when benchmarking 2D matrix transposition, we are actually seeing the computation time for transposing 16 matrices (instead
 of just one). This allows us to measure the gain of SIMD AoSoA without penalizing neither non-AoSoA crates nor AoSoA crates.
 
 This last modification follows the same principle as the one introduced for the benchmarks presented by `ultraviolet` in
 their [README](https://github.com/sebcrozet/mathbench-rs#benchmark-results).
 
-#### Complete benchmark
 ### Benchmark with `-C target-cpu=native`
-In this benchmark I am compiling with the `RUSTFLAGS='-C target-cpu=native` option so that the compiler emits SIMD instructions
+In this benchmark I am compiling with the `RUSTFLAGS='-C target-cpu=native` option so that the compiler emits AVX instructions
 for `f32x8` and `f32x16`. It appears that some crates (namely __glam__ and __vek__) are not as efficient as they could be
-when this option is enabled so you will find a second benchmark without this option in the next section.
+when this option is enabled so you will find a second benchmark without this option enabled in the next section.
 
 Benchmark options:
 - command line: `RUSTFLAGS='-C target-cpu=native' cargo bench`
@@ -389,7 +385,7 @@ Benchmark options:
 
 
 To get a better comparative view of the performance of AoSoA, here are the benchmarks restricted to ultraviolet's _wide_ types
-(Wec2, Wat2, WIsometry2, etc.) and nalgebra types paramaterized by SIMD types (Vector2<f32x4>, Matrix2<f32x8>, Isometry2<f32x16>, etc.):
+(`Wec2, Wat2, WIsometry2`, etc.) and nalgebra types paramaterized by SIMD types (`Vector2<f32x4>, Matrix2<f32x8>, Isometry2<f32x16>`, etc.):
 
 | benchmark                      |   ultraviolet_f32x4   |   nalgebra_f32x4   |   nalgebra_f32x8   |   nalgebra_f32x16   |
 |--------------------------------|-----------------------|--------------------|--------------------|---------------------|
@@ -431,10 +427,10 @@ with little performance gain, and even significant regressions for some tests.
 
 ### Benchmark without `-C target-cpu=native`
 It appears some rust linear algebra crates do not perform as well as they could if `-C target-cpu=native` is passed
-to the compiler. I'm not sure why, but those crates are `glam` and `vek`, both using explicit SIMD in their codebases.
-In addition, it appears that not using `-C target-cpu=native` makes some methods of non-wide types of __ultraviolet__ much less efficient.
+to the compiler. This is for example the case of `glam` and `vek`. However, it appears that not using `-C target-cpu=native`
+makes some methods of non-wide types of __ultraviolet__ much less efficient.
 
-Because we don't use `target-cpu=native` both `f32x8` and `f32x16` won't emit 8- and 16-lanes SIMD instructions, making
+Because we don't use `-C target-cpu=native` here, both `f32x8` and `f32x16` won't emit 8- and 16-lanes AVX instructions, making
 them only as efficient as `f32x4`.
 
 Here is the same benchmark with:
@@ -446,7 +442,7 @@ Here is the same benchmark with:
 |--------------------------------|---------------------|--------------------|--------------------|-----------------------|-----------------|-----------------|----------------|-----------------|-----------------|-----------------|
 | euler 2d x10000                |        __3.057 us__ |         3.069 us   |       __2.992 us__ |          __3.014 us__ |      9.028 us   |       5.28 us   |     5.166 us   |      5.258 us   |      5.259 us   |      8.631 us   |
 | euler 3d x10000                |        __4.585 us__ |       __4.587 us__ |       __4.546 us__ |          __4.587 us__ |      17.84 us   |      18.34 us   |     6.311 us   |      17.57 us   |      18.04 us   |      17.97 us   |
-| isometry transform point2 x1   |         7.7226 ns   |      __6.7828 ns__ |        8.1000 ns   |           8.6412 ns   |    23.4637 ns   |    54.5840 ns   |      N/A       |       N/A       |       N/A       |       N/A       |
+| isometry transform point2 x1   |         7.7226 ns   |      __6.7828 ns__ |        8.1024 ns   |           8.6412 ns   |    23.4637 ns   |    54.5840 ns   |      N/A       |       N/A       |       N/A       |       N/A       |
 | isometry transform point2 x100 |        __2.625 us__ |         2.701 us   |         2.801 us   |            2.837 us   |      3.109 us   |      4.918 us   |      N/A       |       N/A       |       N/A       |       N/A       |
 | isometry transform point3 x1   |        21.0932 ns   |     __16.1782 ns__ |     __16.1052 ns__ |          20.6723 ns   |    61.8824 ns   |   330.1143 ns   |      N/A       |       N/A       |       N/A       |       N/A       |
 | isometry transform point3 x100 |          6.466 us   |       __4.598 us__ |       __4.515 us__ |            4.794 us   |      6.546 us   |      18.19 us   |      N/A       |       N/A       |       N/A       |       N/A       |
@@ -493,11 +489,11 @@ Here is the same benchmark with:
 | vector3 normalize              |      __15.6224 ns__ |     __15.3854 ns__ |     __15.5892 ns__ |        __15.6585 ns__ |    59.1804 ns   |    60.9510 ns   |   35.7763 ns   |    61.3666 ns   |    36.7304 ns   |    61.3199 ns   |
 
 
-# Conclusion
+## Conclusion
 
 The use of SIMD AoSoA is extremely promising for doing efficiently lots of linear algebra on large arrays of entities with the same types.
-This will be possible in __nalgebra__ in its next version 0.21.0 and will perform as well as the current implementation in __ultraviolet__ for `f32x4` while being
- compatible with other SIMD types as well (e.g. `f32x16`, `f64x2`, `i32x4`, `u8x4`, etc.) Those types are newtypes wrapping
+This will be possible in __nalgebra__ in its next version 0.21.0 and will perform as efficiently as the current implementation in __ultraviolet__
+ when using `f32x4` and will also be compatible with other SIMD types as well (e.g. `f32x16`, `f64x2`, `i32x4`, `u8x4`, etc.) Those types are newtypes wrapping
  the types from __packed_simd__. Those newtypes will come from a new crate named [simba](https://crates.io/crates/simba)
  which I will present in more depth in the next edition of the `This month in Rustsim` blog posts.
 
@@ -509,5 +505,6 @@ AoS approach.
 
 ----
 
-Thank you all for reading, and for your support!
-Don't hesitate to share your thoughts on this topic, or to correct me if something seems off to you.
+**Thank you all for reading, and for your support on [patreon](https://www.patreon.com/sebcrozet) or [GitHub sponsor](https://github.com/sponsors/sebcrozet)!**
+
+**Don't hesitate to share your thoughts on this topic, or to correct me if something seems off to you.**

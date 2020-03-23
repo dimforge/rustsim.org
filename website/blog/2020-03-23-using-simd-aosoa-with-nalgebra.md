@@ -77,7 +77,7 @@ of all those layouts with the simple example using 3D vectors (vectors with thre
 _Note:_ The explanations here are merely a superficial introduction of the AoS vs SoA vs AoSoA concepts. I just want to explain
  some of the differences and some of their advantages/disadvantages. I won't give any detailed analysis of the generated
 assembly code after compiling the examples provided. The benchmarks at the end of this post will show the performance difference
-between AoS and SIMD AoSoA. You may be interest by [that article too](https://software.intel.com/en-us/articles/memory-layout-transformations).
+between AoS and SIMD AoSoA. You may be interested by [that article too](https://software.intel.com/en-us/articles/memory-layout-transformations).
 
 _Note 2:_ For iterating through the arrays, I'll be using explicit indices `for i in 0..1024` instead of iterators. This
 is on purpose to make the number of iterations explicit and to make the code easier to understand for readers that are not

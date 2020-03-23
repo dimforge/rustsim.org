@@ -10,6 +10,7 @@ This change is about adding the support for SIMD AoSoA to **nalgebra**. I'll exp
 to SoA (Structure-of-Arrays) and AoS (Array-of-Structures). To give you an idea, SIMD AoSoA is actually what the recent __[ultraviolet](https://crates.io/crates/ultraviolet)__
 crate has been using to achieve its amazing performances.
 
+<!--truncate-->
 
 Here is a benchmark including the next (to-be-released) version of __nalgebra__. The best times within a 2.5% range of the minimum of each row are highlighted.
 Here, the __ultraviolet__ column uses the non-_wide_ types

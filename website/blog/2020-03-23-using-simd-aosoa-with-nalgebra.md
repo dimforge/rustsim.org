@@ -5,9 +5,9 @@ author: Sébastien Crozet
 
 __Hello everyone!__
 
-In this post I'd like to introduce the next major change that will be released in **nalgebra** at the end of this month (March 2020).
+In this post I'd like to introduce the next major change that will be released in **[nalgebra](https://nalgebra.org)** at the end of this month (March 2020).
 This change is about adding the support for SIMD AoSoA to **nalgebra**. I'll explain what I mean by SIMD AoSoA (Array-of-Structures-of-Arrays with explicit SIMD) and how it relates
-to SoA (Structure-of-Arrays) and AoS (Array-of-Structures). To give you an idea, SIMD AoSoA is actually what the recent [ultraviolet](https://crates.io/crates/ultraviolet)
+to SoA (Structure-of-Arrays) and AoS (Array-of-Structures). To give you an idea, SIMD AoSoA is actually what the recent __[ultraviolet](https://crates.io/crates/ultraviolet)__
 crate has been using to achieve its amazing performances.
 
 

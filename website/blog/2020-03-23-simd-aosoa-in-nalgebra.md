@@ -66,7 +66,7 @@ of `ultraviolet` (`Vec2`, `Mat2`, `Isometry3`, etc.) while the column __ultravio
 | vector3 length                 |        5.3741 ns   |         __5.2332 ns__ |    20.5369 ns   |    34.2988 ns   |   20.5652 ns   |    20.6259 ns   |    20.9281 ns   |    20.6052 ns   |
 | vector3 normalize              |     __15.5892 ns__ |        __15.6585 ns__ |    59.1804 ns   |    60.9510 ns   |   35.7763 ns   |    61.3666 ns   |    36.7304 ns   |    61.3199 ns   |
 
-Please see the [last section](http://localhost:3000/blog/2020/03/23/using-simd-aosoa-with-nalgebra#benchmarks-of-rust-linear-algebra-crates) of this post for a more comprehensive benchmark (including the use of `f32x8` and `f32x16`
+Please see the [last section](#benchmarks-of-rust-linear-algebra-crates) of this post for a more comprehensive benchmark (including the use of `f32x8` and `f32x16`
 with nalgebra) and details about the benchmark conditions.
 
 ## What is AoSoA with explicit SIMD?

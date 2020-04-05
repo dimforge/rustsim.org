@@ -106,14 +106,14 @@ const Features = () => (
   <Block background="light" layout="twoColumn"  className="feature">
     {[
         {
-            content: 'Expressive traits hierarchy from the most simple simple algebraic entities (like magmas) to more complex ones (like transformation groups).' +
+            content: 'Set of mathematical traits to facilitate the use of SIMD and non-SIMD numeric types in generic code.' +
                      '<br/><img src="/img/wasm.svg" title="Compatible with WebAssembly." height="30px"/><span class="space"><img src="/img/no_std.svg" title="Can work without std." height="30px"/>' +
-                     '<p><a class="button" href="https://docs.rs/alga">API Doc</a>' +
-                     '<span class="space"></span><a class="button" href="https://github.com/rustsim/alga">GitHub</a></p>',
-            image: imgUrl('alga.svg'),
-            imageLink: 'https://docs.rs/alga',
+                     '<p><a class="button" href="https://docs.rs/simba">API Doc</a>' +
+                     '<span class="space"></span><a class="button" href="https://github.com/rustsim/simba">GitHub</a></p>',
+            image: imgUrl('logo_simba_wide.svg'),
+            imageLink: 'https://docs.rs/simba',
             imageAlign: 'top',
-            title: '**[alga](https://docs.rs/alga)** − Abstract Algebra'
+            title: '**[simba](https://docs.rs/simba)** − Abstract Algebra'
         },
         {
             content: 'Efficient vector and matrix operations and decompositions.' +
@@ -167,11 +167,14 @@ const Features = () => (
             title: '**[Salva](https://salva.rs)** − Fluid Simulation'
         },
         {
-            content: '',
-            image: '',
-            imageLink: '',
-            imageAlign: '',
-            title: ''
+            content: 'Expressive traits hierarchy from the most simple simple algebraic entities (like magmas) to more complex ones (like transformation groups).' +
+                '<br/><img src="/img/wasm.svg" title="Compatible with WebAssembly." height="30px"/><span class="space"><img src="/img/no_std.svg" title="Can work without std." height="30px"/>' +
+                '<p><a class="button" href="https://docs.rs/alga">API Doc</a>' +
+                '<span class="space"></span><a class="button" href="https://github.com/rustsim/alga">GitHub</a></p>',
+            image: imgUrl('alga.svg'),
+            imageLink: 'https://docs.rs/alga',
+            imageAlign: 'top',
+            title: '**[alga](https://docs.rs/alga)** − Abstract Algebra'
         }
     ]}
   </Block>

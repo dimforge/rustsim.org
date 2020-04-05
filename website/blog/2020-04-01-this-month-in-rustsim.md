@@ -33,7 +33,7 @@ Each solid arrow illustrates trait inheritance, e.g., `SimdComplexField` is a su
 illustrate blanket impls, e.g., any type implementing `RealField` also automatically implements `SimdRealField`.
 All the `Simd*` traits (as well as `Field`) are implemented for SIMD types like `f32x8`, `f64x4` as well as scalar types like `f32` and `f64`.
 Non-Simd traits on the other hand (except `Field`) are only implemented for scalar types.
-by scalar types like `f32` and `f64` (and the blanket impls make them implement the `Simd` trait too).
+by scalar types like `f32` and `f64` (and the blanket impls make them implement the `Simd*` traits too).
 __Simba__ is both much simpler and more easily extensible than our [alga](https://crates.io/crates/alga) crate which has
 a much deeper and complex trait hierarchy.
 

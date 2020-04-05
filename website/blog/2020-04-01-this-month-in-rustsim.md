@@ -7,7 +7,7 @@ Welcome to the tenth edition of _This month in rustsim_! This newsletter will pr
 summary of important update that occurred within the rustsim community. This includes in particular updates about
 the [**nphysics**](https://nphysics.org) (physics engine),  [**salva**](https://salva.rs) (fluid simulation), [**ncollide**](https://ncollide.org) (for collision-detection),
 [**nalgebra**](https://nalgebra.org) (for linear algebra),
-and [**alga**](https://github.com/rustsim/alga) (for abstract algebra) crates. This tenth edition will contain updates for the month of March 2020.
+[**simba**](https://github.com/rustsim/simba), and [**alga**](https://github.com/rustsim/alga) (for abstract algebra) crates. This tenth edition will contain updates for the month of March 2020.
 
 
 <!--truncate-->

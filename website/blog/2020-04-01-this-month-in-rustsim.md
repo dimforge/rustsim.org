@@ -29,7 +29,7 @@ Here is a diagram showing most of the traits of __Simba__:
 ![simba logo](https://rustsim.org/img/simba_trait_hierarchy.svg)
 </center>
 
-Each solid arrow illustrates trait inheritance, e.g., `SimdComplexField` is a subtrait of `SimdSigned`. Dashed arrows
+Each solid arrow illustrates trait inheritance, e.g., `SimdRealField` is a subtrait of `SimdSigned`. Dashed arrows
 illustrate blanket impls, e.g., any type implementing `RealField` also automatically implements `SimdRealField`.
 All the `Simd*` traits (as well as `Field`) are implemented for SIMD types like `f32x8`, `f64x4` as well as scalar types like `f32` and `f64`.
 Non-Simd traits on the other hand (except `Field`) are only implemented for scalar types.

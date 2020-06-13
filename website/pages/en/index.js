@@ -157,14 +157,14 @@ const Features = () => (
             content: 'Interactive or offline fluid simulation engine for both 2D and 3D applications.' +
                 ' Implements multiphase fluids as well as two-way coupling with <b>nphysics</b>.' +
                 '<br/><img src="/img/wasm.svg" title="Compatible with WebAssembly." height="30px"/>' +
-                '<p><a class="button" href="https://salva.rs">User Guide</a>' +
-                '<span class="space"></span><a class="button" href="https://salva.rs/rustdoc/salva2d">2D API Doc</a>' +
-                '<span class="space"></span><a class="button" href="https://salva.rs/rustdoc/salva3d">3D API Doc</a>' +
+                '<p><a class="button" href="https://www.salva.rs">User Guide</a>' +
+                '<span class="space"></span><a class="button" href="https://www.salva.rs/rustdoc/salva2d">2D API Doc</a>' +
+                '<span class="space"></span><a class="button" href="https://www.salva.rs/rustdoc/salva3d">3D API Doc</a>' +
                 '<span class="space"></span><a class="button" href="https://github.com/rustsim/salva">GitHub</a></p>',
             image: 'https://www.salva.rs/img/logo_salva_full.svg',
-            imageLink: 'https://www.salva.org',
+            imageLink: 'https://www.salva.rs',
             imageAlign: 'top',
-            title: '**[Salva](https://salva.rs)** − Fluid Simulation'
+            title: '**[Salva](https://www.salva.rs)** − Fluid Simulation'
         },
         {
             content: 'Expressive traits hierarchy from the most simple simple algebraic entities (like magmas) to more complex ones (like transformation groups).' +

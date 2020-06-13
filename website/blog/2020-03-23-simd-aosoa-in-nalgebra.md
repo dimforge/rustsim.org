@@ -298,7 +298,7 @@ SIMD AoSoA is based on __packed_simd__, the use of SIMD types will only work wit
 
 ## Benchmarks of Rust linear-algebra crates
 Now is the time to see if SIMD AoSoA is useful at all. The benchmarks I run here are a modified version of the
-__mathbench-rs__ benchmark suite you may have already head of. For example it
+__mathbench-rs__ benchmark suite you may have already heard of. For example it
 was used when `glam` and `ultraviolet` were published.
 
 If you want to run the benchmarks on your machine, you can [clone my fork](https://github.com/sebcrozet/mathbench-rs) and
